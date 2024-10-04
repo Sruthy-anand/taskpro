@@ -30,4 +30,8 @@ urlpatterns = [
     path('task/<int:pk>/delete/',views.TaskDeleteView.as_view(),name="task-delete"),
 
     path("",views.TaskSummaryView.as_view(),name="task-summary"),
+
+    path("register/",views.SignupView.as_view(),name="signup"),
+
+    path("signin/",views.SignInView.as_view(),name="signin"),
 ]
