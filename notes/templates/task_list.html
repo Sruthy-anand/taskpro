@@ -6,6 +6,8 @@
 <div class="container my-3">
 
     <div class="w-50 mx-auto">
+
+        <h1>Welcome User {{request.user}}</h1>
         <form action="">
             <select name="category" id="" class="form-select" onchange="this.form.submit()">
                 <option value="all"{% if selected == "all"%} selected {%endif%}>All</option>

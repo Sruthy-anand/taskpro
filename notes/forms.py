@@ -10,7 +10,7 @@ class TaskForm(forms.ModelForm):
 
         # fields="__all__"
 
-        exclude=("created_date","status","updated_status")
+        exclude=("created_date","status","updated_status","user")
 
         widgets={
 
@@ -20,9 +20,8 @@ class TaskForm(forms.ModelForm):
 
             "due_date":forms.DateInput(attrs={"class":"form-control","type":"date"}),
 
-            "category":forms.Select(attrs={"class":"form-control form-select"}),
+            "category":forms.Select(attrs={"class":"form-control form-select"})
 
-            "user":forms.TextInput(attrs={"class":"form-control"})
         }
 
 
@@ -34,11 +33,15 @@ class RegistrationForm(forms.ModelForm):
 
         fields=["username","email","password"]
 
+        widgets={
+            "password":forms.PasswordInput()
+        }
+
 
 class SignInForm(forms.Form):
 
     username=forms.CharField()
 
-    password=forms.CharField()
+    password=forms.CharField(widget=forms.PasswordInput())
 
     

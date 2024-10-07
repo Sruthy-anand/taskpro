@@ -15,6 +15,8 @@ from django.views.generic import View
 
 from django.db.models import Q
 
+from django.contrib.auth import authenticate,login,logout
+
 class TaskCreateView(View):
 
     def get(self,request,*args,**kwargs):
@@ -28,6 +30,8 @@ class TaskCreateView(View):
         form_instance=TaskForm(request.POST)
 
         if form_instance.is_valid():
+
+            form_instance.instance.user=request.user
 
             form_instance.save()
 
@@ -199,6 +203,38 @@ class SignInView(View):
         form_instance=SignInForm()
 
         return render(request,self.template_name,{"form":form_instance})
+
+    def post(self,request,*args,**kwargs):
+
+        # initialize form with request.post
+        form_instance=SignInForm(request.POST)
+
+        if form_instance.is_valid():
+
+            # extract username and password
+
+            uname=form_instance.cleaned_data.get("username")
+            pwd=form_instance.cleaned_data.get("password")
+
+            # authenticate user
+            user_object=authenticate(request,username=uname,password=pwd)
+
+            if user_object:
+
+                login(request,user_object)
+
+                return redirect("task-list")
+            
+            return render(request,self.template_name,{"form":form_instance})
+        
+
+class SignOutView(View):
+
+    def get(self,request,*args,**kwargs):
+        
+        logout(request)
+        return redirect("signin")
+
 
 
 
