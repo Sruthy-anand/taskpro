@@ -21,8 +21,10 @@ from notes.decorators import signin_required
 
 from django.utils.decorators import method_decorator
 
+from django.views.decorators.cache import never_cache
 
-@method_decorator(signin_required,name="dispatch")
+decs=[signin_required,never_cache]
+@method_decorator(decs,name="dispatch")
 class TaskCreateView(View):
 
     def get(self,request,*args,**kwargs):
@@ -55,7 +57,7 @@ class TaskCreateView(View):
             return render(request,"task_create.html",{"form":form_instance})
         
 
-@method_decorator(signin_required,name="dispatch")
+@method_decorator(decs,name="dispatch")
 class TaskListView(View):
 
     def get(self,request,*args,**kwargs):
@@ -84,7 +86,7 @@ class TaskListView(View):
 
 
 
-@method_decorator(signin_required,name="dispatch")
+@method_decorator(decs,name="dispatch")
 class TaskDetailView(View):
 
     def get(self,request,*args,**kwargs):
@@ -145,7 +147,7 @@ class TaskUpdateView(View):
 
 
 
-@method_decorator(signin_required,name="dispatch")
+@method_decorator(decs,name="dispatch")
 class TaskDeleteView(View):
 
     def get(self,request,*args,**kwargs):
@@ -159,22 +161,20 @@ class TaskDeleteView(View):
 from django.db.models import Count
 
 
-@method_decorator(signin_required,name="dispatch")    
+@method_decorator(decs,name="dispatch")    
 class TaskSummaryView(View):
 
     def get(self,request,*args,**kwargs):
 
-        qs=Task.objects.all()
+        qs=Task.objects.filter(user=request.user)
 
         total_task_count=qs.count()
 
-        category_summary=Task.objects.all().values("category").annotate(cat_count=Count("category"))
+        category_summary=qs.values("category").annotate(cat_count=Count("category"))
         print(category_summary)
 
-        status_summary=Task.objects.all().values("status").annotate(status_count=Count("status"))
+        status_summary=qs.values("status").annotate(status_count=Count("status"))
         print(status_summary)
-
-
 
         context={
             "total_task_count":total_task_count,
@@ -247,7 +247,7 @@ class SignInView(View):
     
 
     
-@method_decorator(signin_required,name="dispatch")
+@method_decorator(decs,name="dispatch")
 class SignOutView(View):
 
     def get(self,request,*args,**kwargs):
